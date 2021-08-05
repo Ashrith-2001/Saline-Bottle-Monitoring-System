@@ -1,0 +1,54 @@
+
+#include <ESP8266WiFi.h>
+#include <Servo.h>
+int ledPin = 12; // choose pin for the LED
+int inputPin1 = 14; ////Critical level 
+int inputPin2=16; //Empty Bottle Indicator
+int val1=0;
+int val2=0;
+int k=1;
+Servo Myservo;
+
+WiFiServer server(80);
+
+void setup()
+{
+  Serial.begin(115200);
+  delay(10);
+  pinMode(ledPin, OUTPUT);
+   pinMode(inputPin1, INPUT);
+   pinMode(inputPin2, INPUT); 
+   Myservo.attach(2);
+  WiFi.disconnect();
+  delay(3000);
+   WiFi.begin("Hostel-4-2","12345678");
+  while ((!(WiFi.status() == WL_CONNECTED))){
+    delay(300);
+
+  }
+  Serial.println("Connected;My IP is:");
+  Serial.println((WiFi.localIP().toString()));
+  server.begin();
+
+}
+
+
+void loop()
+{
+   
+
+    WiFiClient client = server.available();   //1
+    if (!client) { return; }
+    while(!client.available()){  delay(1); }    //1
+     
+       client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/html");
+      client.println("");
+    client.println("<!DOCTYPE HTML>");
+    client.println("<html>");
+    client.println("SALINE REACHED CRITICAL LEVEL B1");
+    client.println("</html>"); 
+   
+    client.stop();
+    delay(1);
+}}
